@@ -5,9 +5,9 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.x = 10;
-camera.position.y = 10;
-camera.position.z = 10;
+camera.position.x = 20;
+camera.position.y = 20;
+camera.position.z = 20;
 camera.lookAt(0, 0, 0);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
@@ -41,7 +41,14 @@ function createCube(x, y, z) {
     return cube;
 }
 
-function addMatrix(matrix) {
+function moveCamera(x, y, z) {
+    camera.position.x = x;
+    camera.position.y = y;
+    camera.position.z = z;
+    camera.lookAt(0, 0, 0);
+}
+
+function renderMatrix(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             for (let k = 0; k < matrix[0][0].length; k++) {
@@ -53,9 +60,18 @@ function addMatrix(matrix) {
     }
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+function init() {
+    window.matrix = createMatrix(13);
+    update();
 }
 
-animate();
+async function update() {
+    clearMatrix();
+    matrix = applyNextItt(matrix);
+    renderMatrix(matrix);
+    renderer.render(scene, camera);
+    await new Promise(r => setTimeout(r, 200));
+    requestAnimationFrame(update);
+}
+
+init();
